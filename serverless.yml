@@ -1,0 +1,80 @@
+configValidationMode: error
+unresolvedVariablesNotificationMode: error
+variablesResolutionMode: 20210326
+
+# TODO - add real name
+service: YOUR-APP-NAME
+frameworkVersion: '2'
+
+plugins:
+  # Plugin to allow the use of Typescript
+  - serverless-plugin-typescript
+
+  # Allows to test Lambda functions
+  - serverless-offline
+
+custom:
+  # Apply these parameters to disable CORS on a lambda function
+  defaultLambdaCors:
+    origin: '*'
+    headers:
+      - '*'
+
+  # Imports the environment variables from ".env". To access a variable, use ${self:custom.dotenvVars.SOME_VAR}
+  dotenvVars: ${file(configs.js)}
+
+  # Names of the DynamoDB tables
+  tables:
+    usersTable: ${self:service}-users-${sls:stage}
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  lambdaHashingVersion: 20201221
+  iam:
+    role:
+      name: ${self:service}-root
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:*
+            - lambda:*
+          Resource: '*'
+
+functions:
+  UserLogin:
+    handler: src/index.login
+    events:
+      - http:
+          cors: ${self:custom.defaultLambdaCors}
+          path: /login
+          method: POST
+    environment:
+      JWT_SECRET: ${self:custom.dotenvVars.JWT_SECRET}
+      DYNAMODB_USERS_TABLE: ${self:custom.tables.usersTable}
+
+  UserSignup:
+    handler: src/index.signup
+    events:
+      - http:
+          cors: ${self:custom.defaultLambdaCors}
+          path: /signup
+          method: POST
+    environment:
+      SIGNUP_SECRET: ${self:custom.dotenvVars.SIGNUP_SECRET}
+      JWT_SECRET: ${self:custom.dotenvVars.JWT_SECRET}
+      DYNAMODB_USERS_TABLE: ${self:custom.tables.usersTable}
+
+resources:
+  Resources:
+    usersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        BillingMode: PAY_PER_REQUEST
+        TableName: ${self:custom.tables.usersTable}
+        AttributeDefinitions:
+          - AttributeName: email
+            AttributeType: S
+        KeySchema:
+          - AttributeName: email
+            KeyType: HASH
