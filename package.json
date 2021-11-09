@@ -6,6 +6,7 @@
 	"scripts": {
 		"offline": "serverless offline --httpPort 8080",
 		"deploy": "serverless deploy",
+		"lint": "tsc --noEmit",
 		"upgrade": "npx npm-check-updates -u"
 	},
 	"keywords": [],
