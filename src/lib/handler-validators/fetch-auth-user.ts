@@ -14,7 +14,7 @@ type ResultData = {
 	user: User;
 };
 
-export function fetchAuthUser(): Middleware<RequiredData, ResultData> {
+export function fetchAuthUser(): Middleware<RequiredData, ResultData, any> {
 	return async middlewareData => {
 		const { email } = middlewareData.tokenContent;
 		let user: User | null;

@@ -1,21 +1,21 @@
-import { APIGatewayProxyEvent } from 'aws-lambda';
+import { APIGatewayProxyEvent, DynamoDBStreamEvent } from 'aws-lambda';
 import { ServerResponse } from '../server-response';
 import { Middleware } from './middleware';
 
 type ObjAny = Record<any, any>;
 
-class Handler<DataType extends ObjAny> {
-	private middlewares: Middleware<DataType, any>[] = [];
+class Handler<DataType extends ObjAny, EventType> {
+	private middlewares: Middleware<DataType, any, EventType>[] = [];
 
 	use<RequiredData extends DataType, ResultData extends ObjAny>(
-		middleware: Middleware<RequiredData, ResultData>,
-	): Handler<DataType & ResultData> {
+		middleware: Middleware<RequiredData, ResultData, EventType>,
+	): Handler<DataType & ResultData, EventType> {
 		this.middlewares.push(middleware as any);
 		return this;
 	}
 
-	asGatewayHandler(handler: Middleware<{}, DataType>) {
-		return async (event: APIGatewayProxyEvent) => {
+	asHandler(handler: Middleware<{}, DataType, EventType>) {
+		return async (event: EventType) => {
 			const data = {};
 			for (const middleware of this.middlewares) {
 				let value = await middleware(data as any, event);
@@ -42,6 +42,10 @@ class Handler<DataType extends ObjAny> {
  * 	});
  * ```
  */
-export function makeHandler() {
-	return new Handler();
+export function makeGatewayHandler() {
+	return new Handler<{}, APIGatewayProxyEvent>();
+}
+
+export function makeDynamoDBStreamHandler() {
+	return new Handler<{}, DynamoDBStreamEvent>();
 }

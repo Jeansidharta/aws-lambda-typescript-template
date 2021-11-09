@@ -1,7 +1,7 @@
 import { ServerResponse } from '../../lib/server-response';
 import bcrypt from 'bcryptjs';
 import { getUser } from '../../dynamo/users';
-import { makeHandler } from '../../lib/make-handler';
+import { makeGatewayHandler } from '../../lib/make-handler';
 import { expectBody } from '../../lib/handler-validators/expect-body';
 import { expectEnv } from '../../lib/handler-validators/require-env';
 import { expectHTTPMethod } from '../../lib/handler-validators/expect-http-methods';
@@ -11,7 +11,7 @@ import { generateJWT } from '../../lib/jwt';
 import { validateBody } from '../../lib/handler-validators/validate-body';
 import v8n from 'v8n';
 
-export const login = makeHandler()
+export const login = makeGatewayHandler()
 	.use(expectEnv('JWT_SECRET'))
 	.use(expectEnv('DYNAMODB_USERS_TABLE'))
 	.use(expectHTTPMethod('POST'))
@@ -24,7 +24,7 @@ export const login = makeHandler()
 			}),
 		),
 	)
-	.asGatewayHandler(async middlewareData => {
+	.asHandler(async middlewareData => {
 		const body = middlewareData.body;
 
 		let user: User | null;

@@ -1,7 +1,6 @@
-import { APIGatewayProxyEvent } from 'aws-lambda';
-import { ServerResponse } from '../../lib/server-response';
+import { ServerResponse } from '../server-response';
 
-export type Middleware<RequiredData, ResultData> = (
+export type Middleware<RequiredData, ResultData, EventType> = (
 	middlewareData: RequiredData & ResultData,
-	event: APIGatewayProxyEvent,
+	event: EventType,
 ) => ServerResponse | Promise<ServerResponse | null> | null;

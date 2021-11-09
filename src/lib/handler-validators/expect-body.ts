@@ -36,7 +36,9 @@ function applyDefaultOptions(userOptions: UserOptions) {
  * If the request has a valid body, with valid content-type and HTTP Method, the body will
  * be parsed and stored in the middlewareData object
  */
-export function expectBody(userOptions: UserOptions = {}): Middleware<RequiredData, ResultData> {
+export function expectBody(
+	userOptions: UserOptions = {},
+): Middleware<RequiredData, ResultData, APIGatewayProxyEvent> {
 	const options = applyDefaultOptions(userOptions);
 	return (middlewareData, event) => {
 		const shouldMethodHaveEmptyBody = event.httpMethod === 'GET' || event.httpMethod === 'OPTIONS';

@@ -15,8 +15,10 @@ type ResultData = {};
  * If the wrong HTTP method is received, the middleware will send an Error response
  * to the client
  */
-export function expectHTTPMethod(method: HTTPMethod): Middleware<RequiredData, ResultData> {
-	return (_middlewareData: {}, event: APIGatewayProxyEvent) => {
+export function expectHTTPMethod(
+	method: HTTPMethod,
+): Middleware<RequiredData, ResultData, APIGatewayProxyEvent> {
+	return (_middlewareData, event) => {
 		if (event.httpMethod !== method) {
 			return ServerResponse.error(
 				HTTPStatusCode.CLIENT_ERROR.C405_METHOD_NOT_ALLOWED,

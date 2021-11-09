@@ -9,7 +9,7 @@ type RequiredData = {};
  */
 export function expectEnv<T extends string>(
 	variableName: T,
-): Middleware<RequiredData, Record<T, string>> {
+): Middleware<RequiredData, Record<T, string>, any> {
 	return async middlewareData => {
 		const value = process.env[variableName] as string;
 

@@ -12,8 +12,8 @@ type ResultData = {};
  * This middleware makes sure the request has an empty body. If a body is found,
  * the middleware will return am Error response
  */
-export function expectEmptyBody(): Middleware<RequiredData, ResultData> {
-	return (_middlewareData: {}, event: APIGatewayProxyEvent) => {
+export function expectEmptyBody(): Middleware<RequiredData, ResultData, APIGatewayProxyEvent> {
+	return (_middlewareData, event) => {
 		if (event.body) {
 			return ServerResponse.error(
 				HTTPStatusCode.CLIENT_ERROR.C400_BAD_REQUEST,

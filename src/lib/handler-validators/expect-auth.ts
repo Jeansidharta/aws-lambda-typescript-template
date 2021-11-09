@@ -17,7 +17,7 @@ type ResultData = {
 const extractAuthorizationToken = (event: APIGatewayProxyEvent) =>
 	(event.headers['authorization'] || event.headers['Authorization']) as string | undefined;
 
-export function expectAuth(): Middleware<RequiredData, ResultData> {
+export function expectAuth(): Middleware<RequiredData, ResultData, APIGatewayProxyEvent> {
 	return async (middlewareData, event) => {
 		const token = extractAuthorizationToken(event);
 

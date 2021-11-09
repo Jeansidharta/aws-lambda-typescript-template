@@ -14,7 +14,7 @@ type ResultData<BodyType> = {
 
 export function validateBody<BodyType extends Record<string, any>>(
 	validator: V8nValidator,
-): Middleware<RequiredData, ResultData<BodyType>> {
+): Middleware<RequiredData, ResultData<BodyType>, any> {
 	return middlewareData => {
 		try {
 			validator.check(middlewareData.body);
