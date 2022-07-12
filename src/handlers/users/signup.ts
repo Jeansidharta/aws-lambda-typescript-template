@@ -9,7 +9,6 @@ import { validateBody } from '../../lib/handler-validators/validate-body';
 import v8n from 'v8n';
 
 export const signup = makeGatewayHandler()
-	.use(expectEnv('SIGNUP_SECRET'))
 	.use(expectEnv('JWT_SECRET'))
 	.use(expectEnv('DYNAMODB_USERS_TABLE'))
 	.use(expectHTTPMethod('POST'))

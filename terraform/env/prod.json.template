@@ -1,0 +1,4 @@
+{
+	"environment_name": "prod",
+	"JWT_SECRET": ""
+}
